@@ -1,4 +1,43 @@
-# Getting Started with Create React App
+# Firebase Authentication App
+
+A modern authentication system built with React, Firebase, and Tailwind CSS featuring a beautiful UI powered by Shadcn UI components.
+
+![Firebase Authentication](https://firebase.google.com/images/social.png)
+
+## Features
+
+- **Multiple Authentication Methods**:
+  - Email/Password authentication with strong password requirements
+  - Google authentication
+  - GitHub authentication
+
+- **Secure Authentication Flow**:
+  - Protected routes for authenticated users
+  - Public routes for unauthenticated users
+  - Automatic redirection based on authentication status
+
+- **Password Strength Validation**:
+  - Real-time password strength meter
+  - Visual indicators for password requirements
+  - Enforced strong password policy
+
+- **Modern UI Components**:
+  - Built with Tailwind CSS v3
+  - Enhanced with Shadcn UI components
+  - Responsive design for all devices
+
+- **User Experience**:
+  - Loading states for better feedback
+  - Error handling and display
+  - Clean and intuitive interface
+
+## Technology Stack
+
+- **Frontend**: React.js
+- **Authentication**: Firebase Authentication
+- **Styling**: Tailwind CSS v3 and Shadcn UI
+- **Routing**: React Router v7
+- **Environment Variables**: dotenv
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
