@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,5 +23,20 @@ const app = initializeApp(firebaseConfig);
 // Initialize Auth
 const auth = getAuth(app);
 
-export { auth };
+// Initialize providers
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+// Configure providers
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
+// Use auth emulator for testing if needed
+if (process.env.NODE_ENV === 'test') {
+  // This is commented out because we're using mock values instead
+  // connectAuthEmulator(auth, 'http://localhost:9099');
+}
+
+export { auth, googleProvider, githubProvider };
 export default app;
