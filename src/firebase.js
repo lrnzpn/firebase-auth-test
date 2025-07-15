@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
+import { getAnalytics, logEvent } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,6 +24,9 @@ const app = initializeApp(firebaseConfig);
 // Initialize Auth
 const auth = getAuth(app);
 
+// Initialize Analytics
+const analytics = getAnalytics(app);
+
 // Initialize providers
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
@@ -38,5 +42,5 @@ if (process.env.NODE_ENV === 'test') {
   // connectAuthEmulator(auth, 'http://localhost:9099');
 }
 
-export { auth, googleProvider, githubProvider };
+export { auth, googleProvider, githubProvider, analytics, logEvent };
 export default app;

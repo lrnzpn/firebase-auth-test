@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { auth, analytics, logEvent } from '../firebase';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
@@ -77,7 +77,24 @@ const Signup = () => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            navigate('/login');
+            
+            // Send email verification
+            await sendEmailVerification(user);
+            
+            // Log sign_up event to Firebase Analytics
+            logEvent(analytics, 'sign_up', {
+                method: 'email',
+                user_id: user.uid,
+                password_strength_score: passwordStrength.score
+            });
+            
+            // Show success message and navigate to login
+            setError('');
+            navigate('/login', { 
+                state: { 
+                    message: 'Account created successfully! Please check your email to verify your account.' 
+                } 
+            });
         } catch (error) {
             setError(error.message);
             console.log(error.code, error.message);

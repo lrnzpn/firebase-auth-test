@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider, githubProvider } from '../firebase';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { auth, googleProvider, githubProvider, analytics, logEvent } from '../firebase';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    
+    // Check for success message from redirect
+    useEffect(() => {
+        if (location.state?.message) {
+            setSuccess(location.state.message);
+            // Clear the message from location state
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
 
     const onLogin = async (e) => {
         e.preventDefault();
@@ -20,7 +31,20 @@ const Login = () => {
         
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            // Signed in
+            const user = userCredential.user;
+            
+            // Check if email is verified
+            if (!user.emailVerified) {
+                setError('Please verify your email before logging in. Check your inbox for a verification link.');
+                return;
+            }
+            
+            // Log login event to Firebase Analytics
+            logEvent(analytics, 'login', {
+                method: 'email',
+                user_id: user.uid
+            });
+            
             navigate('/');
         } catch (error) {
             setError(error.message);
@@ -34,6 +58,13 @@ const Login = () => {
         setError('');
         try {
             const result = await signInWithPopup(auth, googleProvider);
+        
+            // Log login event to Firebase Analytics
+            logEvent(analytics, 'login', {
+                method: 'google',
+                user_id: result.user.uid
+            });
+        
             navigate('/');
         } catch (error) {
             setError(error.message);
@@ -45,6 +76,13 @@ const Login = () => {
         setError('');
         try {
             const result = await signInWithPopup(auth, githubProvider);
+            
+            // Log login event to Firebase Analytics
+            logEvent(analytics, 'login', {
+                method: 'github',
+                user_id: result.user.uid
+            });
+            
             navigate('/');
         } catch (error) {
             setError(error.message);
@@ -65,6 +103,11 @@ const Login = () => {
                     {error && (
                         <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md mb-4">
                             {error}
+                        </div>
+                    )}
+                    {success && (
+                        <div className="bg-green-100 text-green-800 text-sm p-3 rounded-md mb-4">
+                            {success}
                         </div>
                     )}
                     <form onSubmit={onLogin} className="space-y-4">
@@ -150,11 +193,16 @@ const Login = () => {
                         </Button>
                     </div>
                 </CardContent>
-                <CardFooter className="flex justify-center">
+                <CardFooter className="flex flex-col space-y-2 items-center">
                     <p className="text-sm text-muted-foreground">
                         Don't have an account?{' '}
                         <NavLink to="/signup" className="text-primary font-medium hover:underline">
                             Sign up
+                        </NavLink>
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                        <NavLink to="/reset-password" className="text-primary font-medium hover:underline">
+                            Forgot your password?
                         </NavLink>
                     </p>
                 </CardFooter>

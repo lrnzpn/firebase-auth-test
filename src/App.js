@@ -2,6 +2,7 @@ import React from 'react';
 import Home from './page/Home';
 import Signup from './page/Signup';
 import Login from './page/Login';
+import ResetPassword from './page/ResetPassword';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -37,6 +38,14 @@ function App() {
                 element={
                   <PublicRoute>
                     <Login />
+                  </PublicRoute>
+                } 
+              />
+              <Route 
+                path="/reset-password" 
+                element={
+                  <PublicRoute>
+                    <ResetPassword />
                   </PublicRoute>
                 } 
               />
